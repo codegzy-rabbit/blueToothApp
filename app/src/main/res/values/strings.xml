@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">BlueTooth Application</string>
+    <string name="secure_connect">附近蓝牙</string>
+    <string name="search">search</string>
+    <string name="displayPairedBlueTooth">已配对蓝牙</string>
+    <string name="displayUnPairedBlueTooth">可配对蓝牙</string>
+
+    <!--    icon name-->
+    <string-array name="icon_device">
+        <item>&#xf00a7;</item>
+        <item>&#x3448;</item>
+        <item>&#xe7ff;</item>
+        <item>&#xe633;</item>
+    </string-array>
+    <string name="icon_right_arrow">&#xeb8a;</string>
+</resources>

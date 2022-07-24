@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<BluetoothDevice> mPairedBlueToothDevices;
     private ArrayList<BluetoothDevice> mUnPairedBlueToothDevices;
     private RecyclerView recyclerView;
+    private SpacesItemDecoration spacesItemDecoration = new SpacesItemDecoration(8);
     private String tmpBluetoothDeviceName = "74995588";
 
 
@@ -285,7 +286,9 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
         RecyclerAdapter recyclerAdapter = new RecyclerAdapter(bluetoothDevicesArg, MainActivity.this);
-        recyclerView.addItemDecoration(new SpacesItemDecoration(8));
+        if (recyclerView.getItemDecorationCount() == 0) {
+            recyclerView.addItemDecoration(spacesItemDecoration);
+        }
         recyclerView.setAdapter(recyclerAdapter);
     }
 

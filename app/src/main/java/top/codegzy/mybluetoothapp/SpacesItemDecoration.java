@@ -4,10 +4,11 @@ import android.content.res.Resources;
 import android.graphics.Rect;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class SpacesItemDecoration extends RecyclerView.ItemDecoration {
-    private int space;
+    private final int space;
 
     public SpacesItemDecoration(int space) {
         this.space = space;
@@ -18,8 +19,8 @@ public class SpacesItemDecoration extends RecyclerView.ItemDecoration {
     }
 
     @Override
-    public void getItemOffsets(Rect outRect, View view,
-                               RecyclerView parent, RecyclerView.State state) {
+    public void getItemOffsets(Rect outRect, @NonNull View view,
+                               RecyclerView parent, @NonNull RecyclerView.State state) {
         outRect.left = space;
         outRect.right = space;
         outRect.bottom = space;

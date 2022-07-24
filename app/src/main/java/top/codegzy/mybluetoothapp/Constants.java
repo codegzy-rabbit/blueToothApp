@@ -40,6 +40,21 @@ public interface Constants {
     String NO_NAME_DEVICE = "未知设备";
 
     /**
+     * String ALL
+     */
+    String ALL = "ALL";
+
+    /**
+     * String Paired
+     */
+    String PAIRED = "PAIRED";
+
+    /**
+     * String UnPair
+     */
+    String UNPAIRED = "UNPAIRED";
+
+    /**
      * prompt message short
      *
      * @param context context param

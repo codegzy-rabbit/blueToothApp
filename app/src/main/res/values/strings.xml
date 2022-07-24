@@ -12,5 +12,12 @@
         <item>&#xe7ff;</item>
         <item>&#xe633;</item>
     </string-array>
+    <string name="icon_computer">&#xf00a7;</string>
+    <string name="icon_phone">&#x3448;</string>
     <string name="icon_right_arrow">&#xeb8a;</string>
+    <string name="icon_all_bluetooth">&#xe636;</string>
+    <string name="icon_pair_bluetooth">&#xec4a;</string>
+    <string name="icon_unpair_bluetooth">&#xe6b2;</string>
+    <string name="icon_mac">&#xe949;</string>
+    <string name="icon_connect_device">&#xeb63;</string>
 </resources>

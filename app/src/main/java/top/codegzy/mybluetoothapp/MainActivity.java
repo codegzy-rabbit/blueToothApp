@@ -26,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity {
@@ -37,13 +38,15 @@ public class MainActivity extends AppCompatActivity {
     private BluetoothAdapter mBluetoothAdapter;
     private String mBluetoothDeviceName;
     private String mBluetoothAddress;
-    private ArrayList<BluetoothDevice> mBlueToothDevices;
-    private ArrayList<BluetoothDevice> mPairedBlueToothDevices;
-    private ArrayList<BluetoothDevice> mUnPairedBlueToothDevices;
+    private List<BluetoothDevice> mBlueToothDevices;
+    private List<BluetoothDevice> mPairedBlueToothDevices;
+    private List<BluetoothDevice> mUnPairedBlueToothDevices;
     private RecyclerView recyclerView;
-    private SpacesItemDecoration spacesItemDecoration = new SpacesItemDecoration(8);
+    private SpacesItemDecoration spacesItemDecoration = new SpacesItemDecoration(10);
     private String tmpBluetoothDeviceName = "74995588";
 
+
+    //TODO 下拉刷新
 
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @SuppressLint("MissingPermission")
@@ -60,71 +63,19 @@ public class MainActivity extends AppCompatActivity {
                 // fill the mBluetoothDevices array
                 mBlueToothDevices.add(device);
                 // refresh the mBluetoothDevices array to display
-                //TODO 需要优化
-//                discoverBlueTooth(mBlueToothDevices);
                 // if device is bonded
-                if (device.getBondState() == BluetoothDevice.BOND_BONDED) {
-                    mPairedBlueToothDevices.add(device);
-
-                    Log.i("broadcast", "sch onReceive:BOND_BONDED= " + device.getName());
-
-                    //  verify the name of device is not null and contains the tmpBluetoothDeviceName
-                    if (Objects.nonNull(device.getName()) && device.getName().contains(tmpBluetoothDeviceName)) {
-                        // get device address
-                        mBluetoothAddress = device.getAddress();
-                        //get device name
-                        mBluetoothDeviceName = device.getName();
-
-                        // define intent
-                        Intent i = new Intent(MainActivity.this, MainActivity2.class);
-                        // pass bluetooth address information
-                        i.putExtra("BluetoothAddress", mBluetoothAddress);
-                        // start up
-                        startActivity(i);
-
-                        Log.i("broadcast", "sch target device:BOND_BONDED= " + device.getName());
-                        return;
-                    }
-
-
-                    // if device is not bond
-                } else if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
+                if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
                     mUnPairedBlueToothDevices.add(device);
-                    Log.i("broadcast", "sch onReceive:not BOND_BONDED= " + device.getName());
-
-                    if (Objects.nonNull(device.getName()) && device.getName().contains(tmpBluetoothDeviceName)) {
-                        // get device address
-                        mBluetoothAddress = device.getAddress();
-                        //get device name
-                        mBluetoothDeviceName = device.getName();
-
-                        // define intent
-                        Intent i = new Intent(MainActivity.this, MainActivity2.class);
-                        // pass bluetooth address information
-                        i.putExtra("BluetoothAddress", mBluetoothAddress);
-                        // start up
-                        startActivity(i);
-
-
-                        Log.i("broadcast", "sch target device:not BOND_BONDED= " + device.getName());
-                        return;
-                    }
-
                 }
 
                 // if bluetooth adapter the discover action is finished
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 // the mBluetoothAddress and mBluetoothDeviceName is not null
-                Log.i("SIZE", "onReceive: " + mBlueToothDevices.size());
-                Log.i("Devices", "onReceive: " + mBlueToothDevices);
+                Log.i("Size", "Search for the number of devices: " + mBlueToothDevices.size());
+                Log.i("Devices", "the name of devices: " + mBlueToothDevices);
 
-                if (Objects.nonNull(mBluetoothAddress) && Objects.nonNull(mBluetoothDeviceName)) {
-                    //display a message
-                    Constants.toastShort(getApplicationContext(), String.format("%s = %s", mBluetoothDeviceName, mBluetoothAddress));
-                } else {
-                    //display a message
-                    Constants.toastShort(getApplicationContext(), "搜索完成，没有找到需要的蓝牙设备");
-                }
+                //display a message
+                Constants.toastShort(getApplicationContext(), "The search is complete");
 
             }
 
@@ -154,13 +105,17 @@ public class MainActivity extends AppCompatActivity {
     /**
      * app init method
      */
+    @SuppressLint("MissingPermission")
     private void appInit() {
         //init array list
         mBlueToothDevices = new ArrayList<>();
-        mPairedBlueToothDevices = new ArrayList<>();
         mUnPairedBlueToothDevices = new ArrayList<>();
+
         //init bluetooth adapter
         mBluetoothAdapter = BluetoothMain.getInstance().getmBluetoothAdapter();
+
+        mPairedBlueToothDevices = new ArrayList<>(mBluetoothAdapter.getBondedDevices());
+
         // send message button
         sendMessage = findViewById(R.id.sendMessage);
 
@@ -253,34 +208,32 @@ public class MainActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-    @SuppressLint({"MissingPermission", "NonConstantResourceId"})
+    @SuppressLint("MissingPermission")
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    protected void onStart() {
+        super.onStart();
         // if the bluetooth function is not open, open it
-        if (!mBluetoothAdapter.isEnabled()) {
-            mBluetoothAdapter.enable();
+        if (!mBluetoothAdapter.isEnabled() && !mBluetoothAdapter.enable()) {
+            finish();
+            return;
         }
         // start searching for bluetooth devices around you
         mBluetoothAdapter.startDiscovery();
-        int menuId = item.getItemId();
-        switch (menuId) {
-            case R.id.bluetoothSearch:
-                discoverBlueTooth(mBlueToothDevices);
-                Constants.toastShort(this, Constants.IS_SEARCHING);
-                break;
-            case R.id.displayPairedBlueTooth:
-                discoverBlueTooth(mPairedBlueToothDevices);
-                Constants.toastShort(this, "正在搜索已匹配的蓝牙...");
-                break;
-            case R.id.displayUnPairedBlueTooth:
-                discoverBlueTooth(mUnPairedBlueToothDevices);
-                Constants.toastShort(this, "正在搜索可配对的蓝牙...");
-                break;
-            default:
-                break;
+        Intent intent = getIntent();
+        String type = intent.getStringExtra("type");
+        Log.i("Onstart", "onStart: " + type);
+        if (Constants.ALL.equals(type)) {
+            search(mBlueToothDevices);
+            Constants.toastShort(this, Constants.IS_SEARCHING);
+        } else if (Constants.PAIRED.equals(type)) {
+            search(mPairedBlueToothDevices);
+            Constants.toastShort(this, "正在搜索已配对的蓝牙...");
+        } else {
+            search(mUnPairedBlueToothDevices);
+            Constants.toastShort(this, "正在搜索可配对的蓝牙...");
         }
-        return super.onOptionsItemSelected(item);
     }
+
 
     private void discoverBlueTooth(List<BluetoothDevice> bluetoothDevicesArg) {
         recyclerView = findViewById(R.id.recyclerView);
@@ -290,6 +243,22 @@ public class MainActivity extends AppCompatActivity {
             recyclerView.addItemDecoration(spacesItemDecoration);
         }
         recyclerView.setAdapter(recyclerAdapter);
+    }
+
+    private void search(List<BluetoothDevice> bluetoothDevicesArg) {
+        new Thread(() -> {
+            try {
+                for (int i = 0; i < 4; i++) {
+                    TimeUnit.SECONDS.sleep(3);
+                    runOnUiThread(() -> {
+                        discoverBlueTooth(bluetoothDevicesArg);
+                    });
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        }).start();
     }
 
 }

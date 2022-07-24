@@ -4,9 +4,11 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/AndroidStudioProjects/MyBlueToothApp/app/src/main/res/drawable/ic_launcher_background.xml" value="0.233" />
+        <entry key="..\:/AndroidStudioProjects/MyBlueToothApp/app/src/main/res/layout/activity_app.xml" value="0.1676912568306011" />
         <entry key="..\:/AndroidStudioProjects/MyBlueToothApp/app/src/main/res/layout/activity_main.xml" value="0.2246376811594203" />
         <entry key="..\:/AndroidStudioProjects/MyBlueToothApp/app/src/main/res/layout/activity_main2.xml" value="0.2246376811594203" />
         <entry key="..\:/AndroidStudioProjects/MyBlueToothApp/app/src/main/res/layout/card_view.xml" value="0.47393822393822393" />
+        <entry key="..\:/AndroidStudioProjects/MyBlueToothApp/app/src/main/res/layout/folder_card.xml" value="0.25" />
         <entry key="..\:/AndroidStudioProjects/MyBlueToothApp/app/src/main/res/menu/menu.xml" value="0.190234375" />
       </map>
     </option>
